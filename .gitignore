@@ -1,0 +1,22 @@
+# секреты и локальные настройки
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Node (на случай фронта на фреймворке)
+node_modules/
+dist/
+build/
+
+# IDE и системные файлы
+.idea/
+.vscode/
+*.log
+.DS_Store
+Thumbs.db

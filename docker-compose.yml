@@ -1,0 +1,64 @@
+name: kinopolka
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kino_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-kinopolka}
+      POSTGRES_USER: ${POSTGRES_USER:-kino}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kino123}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    networks: [kino-net]
+
+  web-service:
+    build: ./web-service
+    container_name: kino_web_service
+    environment:
+      OMDB_API_KEY: ${OMDB_API_KEY:-}
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    networks: [kino-net]
+
+  backend:
+    build: ./backend
+    container_name: kino_backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kino}:${POSTGRES_PASSWORD:-kino123}@db:5432/${POSTGRES_DB:-kinopolka}
+      WEB_SERVICE_URL: http://web-service:8001
+    depends_on:
+      db:
+        condition: service_healthy
+      web-service:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    networks: [kino-net]
+
+  frontend:
+    build: ./frontend
+    container_name: kino_frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    networks: [kino-net]
+
+networks:
+  kino-net:
+    driver: bridge
+
+volumes:
+  pgdata:

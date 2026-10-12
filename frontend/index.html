@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>КиноПолка</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="logo">▶</div>
+      <div>
+        <h1>КиноПолка</h1>
+        <p>каталог фильмов, избранное и просмотренное</p>
+      </div>
+    </div>
+    <div class="status">
+      <span id="stDb" class="pill">БД…</span>
+      <span id="stWs" class="pill">Web-сервис…</span>
+    </div>
+  </header>
+
+  <section class="searchbar">
+    <form id="searchForm">
+      <input id="q" placeholder="Название фильма, например: матрица, dune, брат" autocomplete="off" required minlength="2">
+      <select id="type">
+        <option value="">всё</option>
+        <option value="movie">фильмы</option>
+        <option value="series">сериалы</option>
+      </select>
+      <input id="year" placeholder="год" maxlength="4" inputmode="numeric">
+      <button type="submit" class="primary">Найти в каталоге</button>
+    </form>
+    <nav class="tabs">
+      <button data-list="favorite">♥ Избранное <b id="cntFav"></b></button>
+      <button data-list="watched">✓ Просмотрено <b id="cntWatched"></b></button>
+      <button data-stats>Статистика</button>
+    </nav>
+  </section>
+
+  <main>
+    <div class="head">
+      <h2 id="title">Найди фильм или открой свои списки</h2>
+      <span id="meta" class="meta"></span>
+    </div>
+    <div id="out" class="grid"></div>
+  </main>
+
+  <dialog id="modal">
+    <button class="close" id="closeModal" aria-label="Закрыть">×</button>
+    <div id="modalBody"></div>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
